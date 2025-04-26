@@ -37,10 +37,4 @@
   <img src="https://skillicons.dev/icons?i=python,java,cpp,cs,html,css,php,js,git,linux,django,react,kotlin,sqlite,rust" />
 </p>
 
----
 
-
-### 🚀 Visitor Count  
-<p align="center">
-  <img src="https://komarev.com/ghpvc/?username=wasif-exe&label=Profile%20views&color=0e75b6&style=flat" alt="wasif-exe" />
-</p>
