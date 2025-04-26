@@ -7,12 +7,12 @@
   </a>
 </p>
 
-<img align="right" alt="Coding" width="400" src="https://i.pinimg.com/originals/f1/e7/34/f1e734f9cade86fe737a9aa404ad5677.gif">
 
 ---
 
 ### 🚀 About Me
-- 💻 I'm passionate about turning reality into code. 
+- 💻 I'm passionate about turning reality into code.
+- 👀 Currently working on Hands-Free usage of technology.
 - 📧 Reach me at **[DiabloSmime@proton.me](mailto:DiabloSmime@proton.me)**.  
 
 ---
