@@ -1,6 +1,6 @@
 <div align="center">
 
-# SYED M WASIF
+# SYED WASIF
 
 **Systems Software Engineer · Low-Latency Infrastructure · Kernel-Bypass Architectures**
 
