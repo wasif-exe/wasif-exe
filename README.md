@@ -12,20 +12,7 @@
 
 ---
 
-###  Benchmark Receipts & Systems Metrics
 
-```text
-┌───────────────────────────────────────────────────────────────────────────────────┐
-│  • Storage Engine   : 2.13M ops/sec MemTable · 1.88x Compaction WAF               │
-│  • Network Kernel   : 300,619 req/sec on 4 physical cores (80.1% syscall drop)    │
-│  • Decision Engine  : 37 ns / tick avg (0.5M candidates evaluated in 18.5ms)      │
-│  • Consensus Sim    : ~397,000 ticks/sec deterministic verification harness       │
-│  • Userspace TCP    : Passes 300/300 chaos seeds (5% loss, 2% duplication)        │
-└───────────────────────────────────────────────────────────────────────────────────┘
-
-```
-
----
 
 ###  Technical Stack & Core Domain
 
