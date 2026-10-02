@@ -12,23 +12,8 @@
 
 ---
 
-### Verified Benchmark Receipts & Systems Metrics
 
-```text
-┌───────────────────────────────────────────────────────────────────────────────────┐
-│  • Multi-Core Sharding : 165.57 Mpps aggregate rate across 4 shared-nothing cores │
-│  • L7 Storage Performance: 7.29 Million ops/sec zero-copy Redis RESP v2 server    │
-│  • Hardware Vectoring  : 10.25 Gbps single-core checksum · 31.15 ns BBR pacing    │
-│  • Storage Engine      : 2.13M ops/sec MemTable · 1.88x Compaction WAF            │
-│  • Kernel Bypass       : 300,619 req/sec on 4 physical cores (80.1% syscall drop) │
-│  • Decision Engine     : 37 ns / tick avg (0.5M candidates evaluated in 18.5ms)   │
-│  • Consensus Sim       : ~397,000 ticks/sec deterministic verification harness    │
-└───────────────────────────────────────────────────────────────────────────────────┘
-```
 
-</div>
-
----
 
 ### Technical Stack & Core Domain
 
