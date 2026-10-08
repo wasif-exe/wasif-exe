@@ -1,4 +1,3 @@
-
 <div align="center">
 
 # SYED WASIF
@@ -12,19 +11,16 @@
 
 ---
 
-
-
-
 ### Technical Stack & Core Domain
 
 | Domain | Technologies & Architectural Focus |
 | :--- | :--- |
 | **Languages** | `Rust` · `C` · `C++20` · `x86_64 Assembly` · `Huff EVM Assembly` · `Python` · `Bash` |
-| **Systems & Kernel** | `Linux 6.x` · `AF_XDP (XSK)` · `eBPF` · `2MB HugePages (MAP_HUGETLB)` · `Direct I/O (O_DIRECT)` · `io_uring` · `mmap` · `POSIX` · `TAP` |
-| **Networking & Protocols** | `RFC 9293 (TCP)` · `Google BBR` · `RFC 6675 SACK` · `RESP v2 (Redis)` · `TLS 1.3` · `ARP` · `DNS` · `ICMP` |
-| **Concurrency & Memory** | `Lock-Free Atomics` · `Flat Slab Allocators` · `Vyukov MPMC Queues` · `EBR Reclamation` · `align(64)` · `mimalloc` |
-| **Hardware & Performance** | `rdtsc Cycle Profiling` · `Word-Parallel Checksums` · `x86_64 AVX2 SIMD` · `Cache Line Alignment` · `Fat LTO` |
-| **Verification & Tools** | `Deterministic Simulation Testing (DST)` · `Loom` · `ThreadSanitizer` · `perf` · `strace` · `Valgrind` · `GDB` |
+| **Systems & Kernel** | `Linux 6.x` · `AF_XDP (XSK)` · `eBPF / XDP` · `2MB HugePages (MAP_HUGETLB)` · `io_uring (SQPOLL + REGISTER_BUFFERS)` · `Direct I/O (O_DIRECT \| O_DSYNC)` · `mmap` · `POSIX` · `TAP` · `sched_setaffinity` |
+| **Networking & Protocols** | `RFC 9000 (QUIC)` · `RFC 9001 (QUIC-TLS)` · `RFC 9114 (HTTP/3)` · `RFC 9204 (QPACK)` · `RFC 9293 (TCP)` · `Google BBR` · `RFC 6675 SACK` · `RFC 8200 (IPv6)` · `RESP v2 (Redis)` · `TLS 1.3` · `ARP` · `DNS` · `ICMP` |
+| **Concurrency & Memory** | `Thread-per-Core (TxC)` · `Shared-Nothing Executors` · `Lock-Free Atomics` · `Flat Slab Allocators` · `SPSC / MPMC Rings` · `Vyukov Queues` · `EBR Reclamation` · `align(64)` · `mimalloc` · `Custom RawWakerVTable` |
+| **Hardware & Performance** | `rdtsc Cycle Profiling` · `x86_64 AVX-512 / AVX2 SIMD` · `SSE4.2 CRC32C` · `AES-128-GCM / HKDF-SHA256` · `SmartNIC Metadata Offload` · `Word-Parallel Checksums` · `Cache Line Alignment` · `Fat LTO` |
+| **Verification & Tools** | `Deterministic Simulation Testing (DST)` · `Loom` · `ThreadSanitizer` · `perf` · `strace` · `Valgrind` · `GDB` · `CPUID Feature Dispatch` |
 
 <br/>
 
@@ -36,16 +32,17 @@
 
 ### Featured Systems Flagships
 
-#### 1. [Wire v4 — Hardware-Sympathetic AF_XDP Dataplane & Redis Engine](https://github.com/wasif-exe/wire)
-> **A zero-syscall, 165 Mpps bare-metal network stack & AF_XDP kernel-bypass engine in Rust.**
-* **Hardware-Sympathetic Memory:** Replaced pointer-chasing heap objects with a flat `ConnTable` slab allocator and 2MB HugePages (`MAP_HUGETLB` + `mlock`), dropping UMEM TLB page entries from 2048 to **4**.
-* **Shared-Nothing Multi-Core Sharding:** 4-tuple flow-steering hash map distributing packets across CPU-pinned workers without locks or atomics (**165.57 Mpps aggregate classification rate**).
-* **`rdtsc` Stage Profiling & BBR:** Instrumenting pipeline stages via hardware cycle counters (L2-L4 parse ~3300 cycles; BBR pacing barrier **31.15 ns/eval**).
-* **L7 Redis KV Engine (`wire-redis`):** Zero-copy RESP v2 streaming parser serving **7.29 Million ops/sec** (~137.2 ns/op), verified compatible with `redis-cli` and `valkey-cli`.
+#### 1. [Wire v6 — Asynchronous Smart-Node Infrastructure Appliance](https://github.com/wasif-exe/wire)
+> **A zero-syscall, hardware-vectorized kernel-bypass network appliance with QUIC/HTTP3, AVX-512 parsing, io_uring SQPOLL NVMe, and a Thread-per-Core async runtime in Rust.**
+* **Zero-Copy QUIC + HTTP/3 Engine:** From-scratch RFC 9000 state machine over AF_XDP UMEM rings, TLS 1.3 key derivation (HKDF-SHA256), AES-128-GCM payload crypto, and RFC 9204 QPACK at **13.22 Mops/s encode / 6.20 Mops/s decode**.
+* **AVX-512 Universal Dataplane:** Dual-stack IPv4/IPv6 L2-L4 parser with branchless extension-header traversal and CPUID dispatch (AVX-512 -> AVX2 -> Scalar). Scalar path hits **75.43 Mpps**; SmartNIC offload hints drop checksum cost to **2.88 cycles/pkt** (226 cycles saved).
+* **io_uring SQPOLL NVMe Reactor:** Kernel submission polling + fixed registered buffers (`IORING_REGISTER_BUFFERS`) delivering **2,169.76 MB/s** Direct I/O and **25.28 Mops/s** async WAL at **42.10 ns** submission overhead.
+* **Thread-per-Core Async Runtime:** Shared-nothing, CPU-pinned `LocalExecutor` with custom `RawWakerVTable` at **202.15 Mops/s** task dispatch (**4.95 ns/task**). No Arc, no Mutex, no work-stealing on the hot path.
+* **Hardware-Sympathetic Foundation:** AF_XDP 2MB HugePage UMEM, eBPF selective flow bridge, Google BBR + RFC 6675 SACK, flat slab ConnTable, lock-free 4-tier timing wheel, and 300-seed deterministic chaos verification.
 
 #### 2. [Thread-Per-Core io_uring & LSM-Tree Storage Engine](https://github.com/wasif-exe/lsm-engine)
 > **A zero-dependency, 3-tier database engine built from raw Linux 6.x kernel primitives up to NVMe persistence.**
-* **Kernel-Bypass Networking:** Thread-per-core event loop using `RECV_MULTISHOT` and kernel-provided buffer rings (`PBUF_RING`), cutting steady-state syscalls by **80.1%** compared to multi-threaded `epoll` (300k+ req/sec).
+* **Kernel-Bypass Networking:** Thread-per-core event loop using `recv_MULTISHOT` and kernel-provided buffer rings (`PBUF_RING`), cutting steady-state syscalls by **80.1%** compared to multi-threaded `epoll` (300k+ req/sec).
 * **Lock-Free Concurrency:** Custom Vyukov MPMC queue and 3-epoch Epoch-Based Reclamation (EBR) collector with `align(64)` cache-line isolation. Formally verified for race freedom via **Loom** model checking and **ThreadSanitizer**.
 * **Storage & SIMD Engine:** `O_DIRECT` sector-aligned WAL, lock-free SkipList MemTable (**2.13M ops/sec**), `mmap` SSTables (**1.88x WAF**), and **x86_64 AVX2 SIMD-vectorized** Bloom filter probes (**1.27M ops/sec** point reads).
 
@@ -73,6 +70,5 @@
 ---
 
 <p align="center">
-  <i>"In low-latency systems, you aren't racing other developers — you are negotiating with cache lines, CPU branch predictors, and the speed of light."</i>
+  <i>"In low-latency systems, you aren't racing other developers. You are negotiating with cache lines, CPU branch predictors, and the speed of light."</i>
 </p>
-```
