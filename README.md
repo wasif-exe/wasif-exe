@@ -62,9 +62,6 @@
 
 ### GitHub Activity
 
-<p align="center">
-  <img src="https://komarev.com/ghpvc/?username=wasif-exe&label=PROFILE+VIEWS&color=005599&style=for-the-badge" alt="Profile Views" />
-</p>
 
 <p align="center">
   <img src="https://github-stats-extended.vercel.app/api?username=wasif-exe&show_icons=true&theme=dark&hide_border=true" alt="Wasif's GitHub Stats" height="165" />
