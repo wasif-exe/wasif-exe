@@ -32,13 +32,13 @@
 
 ### Featured Systems Flagships
 
-#### 1. [Wire v6 — Asynchronous Smart-Node Infrastructure Appliance](https://github.com/wasif-exe/wire)
-> **A zero-syscall, hardware-vectorized kernel-bypass network appliance with QUIC/HTTP3, AVX-512 parsing, io_uring SQPOLL NVMe, and a Thread-per-Core async runtime in Rust.**
-* **Zero-Copy QUIC + HTTP/3 Engine:** From-scratch RFC 9000 state machine over AF_XDP UMEM rings, TLS 1.3 key derivation (HKDF-SHA256), AES-128-GCM payload crypto, and RFC 9204 QPACK at **13.22 Mops/s encode / 6.20 Mops/s decode**.
-* **AVX-512 Universal Dataplane:** Dual-stack IPv4/IPv6 L2-L4 parser with branchless extension-header traversal and CPUID dispatch (AVX-512 -> AVX2 -> Scalar). Scalar path hits **75.43 Mpps**; SmartNIC offload hints drop checksum cost to **2.88 cycles/pkt** (226 cycles saved).
-* **io_uring SQPOLL NVMe Reactor:** Kernel submission polling + fixed registered buffers (`IORING_REGISTER_BUFFERS`) delivering **2,169.76 MB/s** Direct I/O and **25.28 Mops/s** async WAL at **42.10 ns** submission overhead.
-* **Thread-per-Core Async Runtime:** Shared-nothing, CPU-pinned `LocalExecutor` with custom `RawWakerVTable` at **202.15 Mops/s** task dispatch (**4.95 ns/task**). No Arc, no Mutex, no work-stealing on the hot path.
-* **Hardware-Sympathetic Foundation:** AF_XDP 2MB HugePage UMEM, eBPF selective flow bridge, Google BBR + RFC 6675 SACK, flat slab ConnTable, lock-free 4-tier timing wheel, and 300-seed deterministic chaos verification.
+#### 1. [Wire v9 — Zero-Allocation Matching Engine & Memory Kernel](https://github.com/wasif-exe/wire)
+> **A 24-crate from-scratch HFT stack spanning full TCP/IP, kernel bypass, VFIO PCIe DMA, SIMD parsing, a flat-array matching engine, HugePage slab allocator, and lock-free MPMC queues in Rust and C.**
+* **Flat-Array Matching Engine:** Price-time priority order book with O(1) price lookup via direct array indexing (`[PriceLevel; 65536]`), 16-byte cache-aligned `OrderSlot` structs (4 per cache line), and bounded best-bid/ask watermark scans. Core match loop at **11.20 cycles (3.7 ns)** per fill, **267.8 Mops/s**.
+* **HugePage Memory Kernel:** Thread-local slab allocator with 64/128/256B fixed size classes backed by 1GB HugePages (2MB/4KB fallback) via intrusive free lists. Alloc+free at **1.55 ns (646.4 Mops/s)**. Paired with a Vyukov-style lock-free MPMC bounded queue at **6.52 ns push+pop (153.3 Mops/s)** with `align(64)` cursor isolation.
+* **AVX2 Batch Order Cancellation:** Vectorized 8-wide order slot scanning using `_mm256_cmpeq_epi32` (user cancel) and `_mm256_cmpgt_epi32` (price sweep) on `align(32)` packed arrays. **0.96 cycles per 8 slots (24,892 Mslots/s)** for user-ID matching, **0.95 cycles** for price threshold sweeps.
+* **Bare-Metal Hardware Dataplane:** VFIO PCIe BAR0 MMIO doorbell writes at **0.90 ns/tx**, CME MDP 3.0 Little-Endian SBE decoding at **3.45 cycles/msg (870 Mpps)**, dual-feed A/B multicast arbitration at **4.41 cycles**, POSIX `LD_PRELOAD` socket shim at **10.64 cycles/call**, and PTP PI clock servo.
+* **Full-Stack Foundation (v1–v8):** From-scratch TCP/IP with PAWS/SACK/BBR, AF_XDP zero-copy UMEM rings, QUIC/HTTP3 with TLS 1.3 (AES-128-GCM + HKDF-SHA256), AVX-512 dual-stack L2-L4 parser, `io_uring` SQPOLL NVMe reactor (**2.17 GB/s**), eBPF XDP pre-trade risk filter, and 300-seed deterministic chaos verification.
 
 #### 2. [Thread-Per-Core io_uring & LSM-Tree Storage Engine](https://github.com/wasif-exe/lsm-engine)
 > **A zero-dependency, 3-tier database engine built from raw Linux 6.x kernel primitives up to NVMe persistence.**
@@ -63,11 +63,16 @@
 ### GitHub Activity
 
 <p align="center">
-  <img src="https://github-stats-extended.vercel.app/api?username=wasif-exe&show_icons=true&theme=dark&hide_border=true" alt="Wasif's GitHub Stats" height="165" />
-  <img src="https://github-stats-extended.vercel.app/api/top-langs/?username=wasif-exe&layout=compact&theme=dark&hide_border=true&hide=html,css,php" alt="Top Languages" height="165" />
+  <img src="https://komarev.com/ghpvc/?username=wasif-exe&label=PROFILE+VIEWS&color=005599&style=for-the-badge" alt="Profile Views" />
 </p>
 
----
+<p align="center">
+  <img src="https://github-stats-extended.vercel.app/api?username=wasif-exe&show_icons=true&theme=dark&hide_border=true" alt="Wasif's GitHub Stats" height="165" />
+  <img src="https://github-stats-extended.vercel.app/api/top-langs/?username=wasif-exe&layout=compact&theme=dark&hide_border=true&hide=html,css,php" alt="Top Languages" height="165" />
+  <img src="https://github-readme-streak-stats.herokuapp.com/?user=wasif-exe&theme=dark&hide_border=true" alt="GitHub Streak" height="165" />
+</p>
+
+
 
 <p align="center">
   <i>"In low-latency systems, you aren't racing other developers. You are negotiating with cache lines, CPU branch predictors, and the speed of light."</i>
